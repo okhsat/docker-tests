@@ -3,7 +3,7 @@ Some useful Docker test codes for training!
 
 Run the following commands to delete all docker containers and images:
 ```console
-docker rm -v $(docker ps -aq)
+docker rm -vf $(docker ps -aq)
 ```
 
 ```console
