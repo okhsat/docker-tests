@@ -1,0 +1,43 @@
+> docker exec -it mysql-master bash
+> mysql -u root -p
+
+>> SELECT user, host, plugin, authentication_string FROM mysql.user;
+>> GRANT REPLICATION SLAVE ON *.* TO 'user'@'%';
+>> FLUSH PRIVILEGES;
+>> SHOW VARIABLES LIKE '%ssl%';
+>> SHOW BINARY LOG STATUS\G
+>> SHOW REPLICAS;
+>> SHOW BINARY LOGS;
+>> SHOW BINLOG EVENTS;
+>> USE database;
+>> CREATE TABLE users (id int);
+>> INSERT INTO users values (1);
+>> SELECT * FROM users;
+
+> mkdir -p ./ssl
+> docker cp mysql-master:/var/lib/mysql/ca.pem ./ssl/
+> docker cp mysql-master:/var/lib/mysql/client-cert.pem ./ssl/
+> docker cp mysql-master:/var/lib/mysql/client-key.pem ./ssl/
+
+> docker exec -it mysql-slave bash
+> chmod 644 /etc/mysql/ssl/client-key.pem
+> docker compose restart mysql-slave
+> mysql -u root -p
+
+>> SELECT user, host FROM mysql.user;
+>> STOP REPLICA;
+>> RESET REPLICA ALL;
+>> CHANGE REPLICATION SOURCE TO 
+>> SOURCE_HOST='mysql-master',
+>> SOURCE_SSL=1,
+>> SOURCE_SSL_CA='/etc/mysql/ssl/ca.pem',
+>> SOURCE_SSL_CERT='/etc/mysql/ssl/client-cert.pem',
+>> SOURCE_SSL_KEY='/etc/mysql/ssl/client-key.pem',
+>> SOURCE_USER='user',
+>> SOURCE_PASSWORD='password',
+>> SOURCE_LOG_FILE='mysql-bin.000003',
+>> SOURCE_LOG_POS=561;
+>> START REPLICA;
+>> SHOW REPLICA STATUS\G
+>> USE database;
+>> SELECT * FROM users;
