@@ -1,6 +1,12 @@
+> docker compose down -v
+> docker compose up -d
+> mkdir -p ./ssl
+> docker cp mysql-master:/var/lib/mysql/ca.pem ./ssl/
+> docker cp mysql-master:/var/lib/mysql/client-cert.pem ./ssl/
+> docker cp mysql-master:/var/lib/mysql/client-key.pem ./ssl/
+
 > docker exec -it mysql-master bash
 > mysql -u root -p
-
 >> SELECT user, host, plugin, authentication_string FROM mysql.user;
 >> GRANT REPLICATION SLAVE ON *.* TO 'user'@'%';
 >> FLUSH PRIVILEGES;
@@ -14,16 +20,10 @@
 >> INSERT INTO users values (1);
 >> SELECT * FROM users;
 
-> mkdir -p ./ssl
-> docker cp mysql-master:/var/lib/mysql/ca.pem ./ssl/
-> docker cp mysql-master:/var/lib/mysql/client-cert.pem ./ssl/
-> docker cp mysql-master:/var/lib/mysql/client-key.pem ./ssl/
-
 > docker exec -it mysql-slave bash
 > chmod 644 /etc/mysql/ssl/client-key.pem
 > docker compose restart mysql-slave
 > mysql -u root -p
-
 >> SELECT user, host FROM mysql.user;
 >> STOP REPLICA;
 >> RESET REPLICA ALL;
