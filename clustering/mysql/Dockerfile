@@ -1,5 +1,6 @@
+# We'll use the latest MySQL image from Docker Hub
 FROM mysql:latest
 
-#COPY ./setup.sql /docker-entrypoint-initdb.d
+COPY ./sql /docker-entrypoint-initdb.d
 
 EXPOSE 3306

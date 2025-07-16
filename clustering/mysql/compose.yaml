@@ -1,11 +1,10 @@
 services:
   mysql-cluster-1:
-    # We'll use the latest MySQL image from Docker Hub
-    image: mysql:latest
-    # Give it a cool name (mysql-master is pretty clear, right?)
+    build: .
+    # Give it a cool name (mysql-cluster-1 is pretty clear, right?)
     container_name: mysql-cluster-1
-    # Extra commands to configure the master for replication
-    # command: --server-id=1 --log-bin=mysql-bin --binlog-format=row
+    # Extra commands to configure the node
+    # command: --ssl-mode=REQUIRED
     # Set some environment variables for passwords and database details
     # Remember to replace these with your own strong passwords!
     environment:
@@ -20,12 +19,11 @@ services:
       - mysql-net
 
   mysql-cluster-2:
-    # Same image as the master
-    image: mysql:latest
+    build: .
     # Another cool name (can you guess what it is?)
     container_name: mysql-cluster-2
-    # Similar commands and environment variables as the master
-    # command: --server-id=2 --log-bin=mysql-bin --binlog-format=row
+    # Similar commands and environment variables
+    # command: --ssl-mode=REQUIRED
     environment:
       MYSQL_ROOT_PASSWORD: root_password # Same password for both
     volumes:
@@ -37,12 +35,11 @@ services:
       - mysql-net
 
   mysql-cluster-3:
-    # Same image as the master
-    image: mysql:latest
+    build: .
     # Another cool name (can you guess what it is?)
     container_name: mysql-cluster-3
-    # Similar commands and environment variables as the master
-    # command: --server-id=2 --log-bin=mysql-bin --binlog-format=row
+    # Similar commands and environment variables
+    # command: --ssl-mode=REQUIRED
     environment:
       MYSQL_ROOT_PASSWORD: root_password # Same password for both
     volumes:
