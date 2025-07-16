@@ -1,0 +1,44 @@
+services:
+  mysql-cluster-1:
+      #build: .
+      image: mysql:latest
+      container_name: mysql-cluster-1
+      command: --ssl-mode=REQUIRED
+      environment:
+        MYSQL_ROOT_PASSWORD: root_password
+      volumes:
+        - ./db-data1:/var/lib/mysql
+      ports:
+        - "3307:3306"
+  
+  mysql-cluster-2:
+      #build: .
+      image: mysql:latest
+      container_name: mysql-cluster-2
+      command: --ssl-mode=REQUIRED
+      environment:
+        MYSQL_ROOT_PASSWORD: root_password
+      volumes:
+        - ./db-data2:/var/lib/mysql
+      ports:
+        - "3308:3306"
+  
+  mysql-cluster-3:
+      #build: .
+      image: mysql:latest
+      container_name: mysql-cluster-3
+      command: --ssl-mode=REQUIRED
+      environment:
+        MYSQL_ROOT_PASSWORD: root_password
+      volumes:
+        - ./db-data3:/var/lib/mysql
+      ports:
+        - "3309:3306"
+
+volumes:
+  db-data1:
+    driver: local
+  db-data2:
+    driver: local
+  db-data3:
+    driver: local

@@ -1,0 +1,25 @@
+> docker compose down -v
+> docker compose up -d
+> docker logs mysql-cluster-1
+
+
+
+> mkdir -p ./ssl
+> docker cp mysql-master:/var/lib/mysql/ca.pem ./ssl/
+> docker cp mysql-master:/var/lib/mysql/client-cert.pem ./ssl/
+> docker cp mysql-master:/var/lib/mysql/client-key.pem ./ssl/
+
+> docker exec -it mysql-cluster-1 bash
+> mysql -u root -p
+>> SELECT user, host, plugin, authentication_string FROM mysql.user;
+>> GRANT REPLICATION SLAVE ON *.* TO 'user'@'%';
+>> FLUSH PRIVILEGES;
+>> SHOW VARIABLES LIKE '%ssl%';
+>> SHOW BINARY LOG STATUS\G
+>> SHOW REPLICAS;
+>> SHOW BINARY LOGS;
+>> SHOW BINLOG EVENTS;
+>> USE database;
+>> CREATE TABLE users (id int);
+>> INSERT INTO users values (1);
+>> SELECT * FROM users;

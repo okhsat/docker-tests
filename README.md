@@ -1,7 +1,7 @@
-# Docker Tests Codes
+# Docker Test Codes
 Some useful Docker test codes for training!
 
-Run the following commands to delete all docker containers and images:
+Run the following commands to delete all docker containers, images, volumes and networks:
 ```console
 docker rm -vf $(docker ps -aq)
 ```
@@ -20,10 +20,10 @@ docker system prune -a
 
 Run the following command to build and run docker compose:
 ```console
-docker compose up --build -d
+docker compose up -d
 ```
 
 Run the following command to bash into a container:
 ```console
-docker exec -it <container-name> sh
+docker exec -it <container-name> bash
 ```
