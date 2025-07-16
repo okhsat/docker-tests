@@ -1,39 +1,57 @@
 services:
   mysql-cluster-1:
-      #build: .
-      image: mysql:latest
-      container_name: mysql-cluster-1
-      command: --ssl-mode=REQUIRED
-      environment:
-        MYSQL_ROOT_PASSWORD: root_password
-      volumes:
-        - ./db-data1:/var/lib/mysql
-      ports:
-        - "3307:3306"
-  
+    # We'll use the latest MySQL image from Docker Hub
+    image: mysql:latest
+    # Give it a cool name (mysql-master is pretty clear, right?)
+    container_name: mysql-cluster-1
+    # Extra commands to configure the master for replication
+    # command: --server-id=1 --log-bin=mysql-bin --binlog-format=row
+    # Set some environment variables for passwords and database details
+    # Remember to replace these with your own strong passwords!
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+        - ./db-data1:/var/lib/mysql  
+    # Map the container port (3306) to your host machine's port (also 3307)
+    # This lets you access the master server from your machine
+    ports:
+      - "3307:3306"
+    networks:
+      - mysql-net
+
   mysql-cluster-2:
-      #build: .
-      image: mysql:latest
-      container_name: mysql-cluster-2
-      command: --ssl-mode=REQUIRED
-      environment:
-        MYSQL_ROOT_PASSWORD: root_password
-      volumes:
+    # Same image as the master
+    image: mysql:latest
+    # Another cool name (can you guess what it is?)
+    container_name: mysql-cluster-2
+    # Similar commands and environment variables as the master
+    # command: --server-id=2 --log-bin=mysql-bin --binlog-format=row
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password # Same password for both
+    volumes:
         - ./db-data2:/var/lib/mysql
-      ports:
-        - "3308:3306"
-  
+    # Map the container port (3306) to a different host machine port (3308 in this case)
+    ports:
+      - "3308:3306"
+    networks:
+      - mysql-net
+
   mysql-cluster-3:
-      #build: .
-      image: mysql:latest
-      container_name: mysql-cluster-3
-      command: --ssl-mode=REQUIRED
-      environment:
-        MYSQL_ROOT_PASSWORD: root_password
-      volumes:
+    # Same image as the master
+    image: mysql:latest
+    # Another cool name (can you guess what it is?)
+    container_name: mysql-cluster-3
+    # Similar commands and environment variables as the master
+    # command: --server-id=2 --log-bin=mysql-bin --binlog-format=row
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password # Same password for both
+    volumes:
         - ./db-data3:/var/lib/mysql
-      ports:
-        - "3309:3306"
+    # Map the container port (3306) to a different host machine port (3309 in this case)
+    ports:
+      - "3309:3306"
+    networks:
+      - mysql-net      
 
 volumes:
   db-data1:
@@ -42,3 +60,7 @@ volumes:
     driver: local
   db-data3:
     driver: local
+
+networks:
+  mysql-net:
+    driver: bridge
