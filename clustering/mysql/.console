@@ -4,5 +4,60 @@
 > docker exec -it mysql-cluster-1 bash
 > mysql -u root -p
 >> SELECT user, host, plugin, authentication_string FROM mysql.user;
-> mysqlsh -u clusteradmin -p --js
->> dba.checkInstanceConfiguration('clusteradmin@mysql-cluster-1:3306')
+> mysqlsh -u cluster_admin -p --js
+>> dba.checkInstanceConfiguration('cluster_admin@mysql-cluster-1:3306')
+>> dba.configureInstance('cluster_admin@mysql-cluster-1:3306')
+>> dba.checkInstanceConfiguration('cluster_admin@mysql-cluster-2:3306')
+>> dba.configureInstance('cluster_admin@mysql-cluster-2:3306')
+>> dba.checkInstanceConfiguration('cluster_admin@mysql-cluster-3:3306')
+>> dba.configureInstance('cluster_admin@mysql-cluster-3:3306')
+> docker restart mysql-cluster-1
+> docker restart mysql-cluster-2
+> docker restart mysql-cluster-3
+> docker exec -it mysql-cluster-1 bash
+>> mysqlsh -u cluster_admin -p --js
+>> var cluster = dba.createCluster('mysql-cluster')
+>> cluster.status()
+>> cluster.addInstance('cluster_admin@mysql-cluster-2:3306')
+>> cluster.addInstance('cluster_admin@mysql-cluster-3:3306')
+>> cluster.status()
+> docker compose restart
+> docker exec -it mysql-cluster-1 bash
+>> mysqlsh -u cluster_admin -p --js
+>> var cluster = dba.rebootClusterFromCompleteOutage();
+>> var cluster = dba.getCluster()
+>> cluster.status()
+>> cluster.addInstance('cluster_admin@mysql-cluster-2:3306')
+>> cluster.addInstance('cluster_admin@mysql-cluster-3:3306')
+>> cluster.status()
+>> cluster.rescan()
+>> cluster.status()
+> docker exec -it mysql-cluster-1 bash
+> mysql -u cluster_admin -p
+>> SHOW DATABASES;
+>> CREATE DATABASE mysql_cluster;
+>> USE mysql_cluster;
+>> CREATE TABLE test(name VARCHAR(20) NOT NULL, SLNO INT NOT NULL, PRIMARY KEY(SLNO));
+>> DESCRIBE test;
+>> INSERT INTO test VALUE ('test 1', 1)
+>> INSERT INTO test VALUE ('test 2', 2)
+>> INSERT INTO test VALUE ('test 3', 3)
+>> SELECT * FROM test;
+> docker exec -it mysql-cluster-2 bash
+> mysql -u cluster_admin -p
+>> SHOW DATABASES;
+>> USE mysql_cluster;
+>> SELECT * FROM test;
+> docker exec -it mysql-cluster-3 bash
+> mysql -u cluster_admin -p
+>> SHOW DATABASES;
+>> USE mysql_cluster;
+>> SELECT * FROM test;
+> docker stop mysql-cluster-1
+> docker start mysql-cluster-1
+> docker exec -it mysql-cluster-2 bash
+>> mysqlsh -u cluster_admin -p --js
+>> var cluster = dba.getCluster()
+>> cluster.status()
+>> cluster.rescan()
+>> cluster.status()
